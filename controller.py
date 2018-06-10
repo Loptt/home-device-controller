@@ -30,13 +30,13 @@ class IrrigationSystem:
 		pass
 
 	def get_date_and_time(self):
-		get_hour = time.strftime("%H")
-		get_minute = time.strftime("%M")
+		get_hour = int(time.strftime("%H"))
+		get_minute = int(time.strftime("%M"))
 		self.current_time = Time(get_hour, get_minute)
 
-		get_day = time.strftime("%j")
-		get_month = time.strftime("%m")
-		get_year = time.strftime("%y") 
+		get_day = int(time.strftime("%j"))
+		get_month = int(time.strftime("%m"))
+		get_year = int(time.strftime("%y")) 
 		self.current_date = Date(get_year, get_month, get_day)
 
 	def run(self):
@@ -45,10 +45,10 @@ class IrrigationSystem:
 
 			self.get_date_and_time()
 
-			if self.current_time.hours == 22 and self.current_time.minutes == 30:
+			if self.current_time.hours == 16:
 				# turn ON first irrigation
 				# turn OFF second irrigation
-				pass
+				print("Inicio riego 1")
 
 			elif self.current_time.hours == 22 and self.current_time.minutes == 40:
 				# turn OFF first irrigation
@@ -58,7 +58,7 @@ class IrrigationSystem:
 			else:
 				# turn OFF fist irrigation
 				# turn OFF second irrigation
-				pass
+				print("Todo apagado")
 
 irrigation_system = IrrigationSystem()
 
