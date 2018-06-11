@@ -1,4 +1,6 @@
 import time 
+import server
+import threading
 
 class Date:
 
@@ -26,8 +28,12 @@ class IrrigationSystem:
 	current_date = Date()
 	current_time = Time()
 
+	serv = server.Server()
+
 	def __init__(self):
-		pass
+		server_thread = threading.Thread(target=self.serv.run())
+		server_thread.daemon = True
+		server_thread.start()
 
 	def get_date_and_time(self):
 		get_hour = int(time.strftime("%H"))
@@ -44,6 +50,10 @@ class IrrigationSystem:
 		while True:
 
 			self.get_date_and_time()
+			command = self.serv.get_message()
+
+			if command != "":
+				print(command)
 
 			if self.current_time.hours == 16:
 				# turn ON first irrigation
@@ -58,8 +68,9 @@ class IrrigationSystem:
 			else:
 				# turn OFF fist irrigation
 				# turn OFF second irrigation
-				print("Todo apagado")
+				#print("Todo apagado")
+				pass
+
 
 irrigation_system = IrrigationSystem()
-
 irrigation_system.run()
