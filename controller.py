@@ -1,8 +1,16 @@
+import RPi.GPIO as GPIO
 import time
 import threading
 import server
 import socket
 import sys
+
+PIN_1 = 2
+PIN_2 = 3
+
+GPIO.setmode(GPIO.BOARD)
+GPIO.setup(PIN_1, GPIO.OUT)
+GPIO.setup(PIN_2, GPIO.OUT)
 
 class Date:
 
@@ -103,7 +111,7 @@ class IrrigationSystem:
             pass
 
         else:
-            self.serv.send_message("Command " + command + "not found. Type help for a list of commands.\n")
+            self.serv.send_message("Command " + command + " not found. Type help for a list of commands.\n")
 
         self.serv.command = ""      
 
@@ -126,6 +134,10 @@ class IrrigationSystem:
                 # turn OFF second irrigation
                 self.irr_1_active = True
                 self.irr_2_active = False
+
+                GPIO.output(PIN_1, 1)
+                GPIO.output(PIN_2, 0)
+
                 print("Inicio riego 1")
 
             elif self.current_time.hours == 22 and self.current_time.minutes == 40 and not stop_all:
@@ -133,6 +145,10 @@ class IrrigationSystem:
                 # turn ON second irrigation
                 self.irr_1_active = False
                 self.irr_2_active = True
+
+                GPIO.output(PIN_1, 0)
+                GPIO.output(PIN_2, 1)
+
                 print("Inicio riego 2")
                 pass
 
@@ -142,6 +158,10 @@ class IrrigationSystem:
                 #print("Todo apagado")
                 self.irr_1_active = False
                 self.irr_2_active = False
+
+                GPIO.output(PIN_1, 0)
+                GPIO.output(PIN_2, 0)
+
                 pass
 
 print("Instantiating system...")
