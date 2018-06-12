@@ -1,11 +1,12 @@
 import socket
 import sys
 import threading
+import time
 
 
 class Server:
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    connections = []
+    connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     host = ""
     port = 5000
@@ -19,13 +20,7 @@ class Server:
 
         except socket.error as e:
             print(str(e))
-
-    def get_message(self):
-
-        message = self.command
-        self.command = ""
-
-        return message
+            time.sleep(1)
 
     def handle_connection(self, conn, conn_address):
         conn.send(str.encode("Connected to Raspberry PI\n"))
@@ -38,37 +33,40 @@ class Server:
                 print(str(conn_address[0]) + ":" +
                       str(conn_address[1]) + " dissconnected")
                 conn.close()
-                self.connections.remove(conn)
                 break
 
             self.command = data.decode()
+            print("From server class: ", self.command)
 
-    def send_message(self):
+    def send_message(self, message):
 
-        while True:
+        encoded = message.encode()
 
-            print("Input message to clients:")
-
-            try:
-                message = ("Server says: " + input()).encode()
-            except:
-                print("Data input error")
-
-            for connection in self.connections:
-                connection.sendall(message)
+        try:
+            self.connection.sendall(encoded)
+        except:
+            pass
 
     def run(self):
-        print("Initializing server...")
+        print("Initializing server on thread...")
         print("Waiting for connections...\n")
 
+        conn, conn_address = self.s.accept()
+        conn.send(str.encode("Connected to Raspberry PI\n"))
+
+        self.connection = conn
+        
+        print(str(conn_address[0]) + ":" + str(conn_address[1]) + " connected")
+
         while True:
-            conn, conn_address = self.s.accept()
-            thread = threading.Thread(
-                target=self.handle_connection, args=(conn, conn_address))
-            thread.daemon = True
-            thread.start()
 
-            self.connections.append(conn)
+            data = conn.recv(1024)
 
-            print(str(conn_address[0]) + ":" +
-                  str(conn_address[1]) + " connected")
+            if not data:
+                print(str(conn_address[0]) + ":" +
+                      str(conn_address[1]) + " dissconnected")
+                conn.close()
+                break
+
+            self.command = data.decode()
+            print("From server class: ", self.command)

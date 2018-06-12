@@ -22,10 +22,10 @@ class Client:
     def send_command(self):
 
         while True:
-            self.message = input("Command: ")
+            self.message = input(">> ")
             self.s.sendall(self.message.encode())
 
-            if self.message == "quit":
+            if self.message == "exit":
                 break
 
     def __init__(self):
@@ -50,7 +50,7 @@ class Client:
 
             print(server_message.decode())
 
-            if self.message == "quit":
+            if self.message == "exit":
                 break
 
         self.s.close()
