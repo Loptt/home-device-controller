@@ -8,9 +8,12 @@ import sys
 PIN_1 = 2
 PIN_2 = 3
 
-GPIO.setmode(GPIO.BOARD)
+GPIO.setmode(GPIO.BCM)
 GPIO.setup(PIN_1, GPIO.OUT)
 GPIO.setup(PIN_2, GPIO.OUT)
+
+GPIO.output(PIN_1, 0)
+GPIO.output(PIN_2, 0)
 
 class Date:
 
