@@ -132,25 +132,25 @@ class IrrigationSystem:
             if command != "":
                 self.process_command(command)          
 
-            if self.current_time.hours == 22 and self.current_time.minutes == 30 and not stop_all:
+            if self.current_time.hours == 10 and self.current_time.minutes >= 1 and self.current_time.minutes < 8 and not self.stop_all:
                 # turn ON first irrigation
                 # turn OFF second irrigation
                 self.irr_1_active = True
                 self.irr_2_active = False
 
-                GPIO.output(PIN_1, 1)
-                GPIO.output(PIN_2, 0)
+                GPIO.output(PIN_1, 0)
+                GPIO.output(PIN_2, 1)
 
                 print("Inicio riego 1")
 
-            elif self.current_time.hours == 22 and self.current_time.minutes == 40 and not stop_all:
+            elif self.current_time.hours == 10 and self.current_time.minutes >= 10  and self.current_time.minutes < 14 and not self.stop_all:
                 # turn OFF first irrigation
                 # turn ON second irrigation
                 self.irr_1_active = False
                 self.irr_2_active = True
 
-                GPIO.output(PIN_1, 0)
-                GPIO.output(PIN_2, 1)
+                GPIO.output(PIN_1, 1)
+                GPIO.output(PIN_2, 0)
 
                 print("Inicio riego 2")
                 pass
@@ -158,12 +158,15 @@ class IrrigationSystem:
             else:
                 # turn OFF fist irrigation
                 # turn OFF second irrigation
-                #print("Todo apagado")
+                # print("Todo apagado")
+
+                # print(self.current_time.hours)
+                # print(self.current_time.minutes)
                 self.irr_1_active = False
                 self.irr_2_active = False
 
-                GPIO.output(PIN_1, 0)
-                GPIO.output(PIN_2, 0)
+                GPIO.output(PIN_1, 1)
+                GPIO.output(PIN_2, 1)
 
                 pass
 
