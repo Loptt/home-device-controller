@@ -51,6 +51,7 @@ class Client:
             print(server_message.decode())
 
             if self.message == "exit":
+                print("Exiting...")
                 break
 
         self.s.close()

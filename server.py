@@ -27,13 +27,14 @@ class Server:
 
         while True:
 
-            data = conn.recv(1024)
-
-            if not data:
+            try:    
+                data = conn.recv(1024)
+            except:
                 print(str(conn_address[0]) + ":" +
                       str(conn_address[1]) + " dissconnected")
                 conn.close()
                 break
+                pass
 
             self.command = data.decode()
             print("From server class: ", self.command)
@@ -51,22 +52,15 @@ class Server:
         print("Initializing server on thread...")
         print("Waiting for connections...\n")
 
-        conn, conn_address = self.s.accept()
-        conn.send(str.encode("Connected to Raspberry PI\n"))
-
-        self.connection = conn
-        
-        print(str(conn_address[0]) + ":" + str(conn_address[1]) + " connected")
-
         while True:
 
-            data = conn.recv(1024)
+            conn, conn_address = self.s.accept()
 
-            if not data:
-                print(str(conn_address[0]) + ":" +
-                      str(conn_address[1]) + " dissconnected")
-                conn.close()
-                break
+            thread = threading.Thread(target=self.handle_connection, args=(conn,conn_address))
+            thread.daemon = True
+            thread.start()
 
-            self.command = data.decode()
-            print("From server class: ", self.command)
+            self.connection = conn
+        
+            print(str(conn_address[0]) + ":" + str(conn_address[1]) + " connected")
+
