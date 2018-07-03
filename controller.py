@@ -1,48 +1,41 @@
-import RPi.GPIO as GPIO
+#import RPi.GPIO as GPIO
 import time
 import threading
 import server
 import socket
 import sys
+import custom_date_time as date_time
+import irrigator
+import schedule
+
 
 PIN_1 = 2
 PIN_2 = 3
 
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(PIN_1, GPIO.OUT)
-GPIO.setup(PIN_2, GPIO.OUT)
+#Electrical configuration demands the on status to be a logical 0
+ON_STATUS = 0
+#Electrical configuration demands the off status to be a logical 1
+OFF_STATUS = 1
 
-GPIO.output(PIN_1, 0)
-GPIO.output(PIN_2, 0)
+#GPIO.setmode(GPIO.BCM)
+#GPIO.setup(PIN_1, GPIO.OUT)
+#GPIO.setup(PIN_2, GPIO.OUT)
 
-class Date:
-
-    year = 0
-    month = 0
-    day = 0
-
-    def __init__(self, year=0, month=0, day=0):
-        self.day = day
-        self.month = month
-        self.year = year
-
-
-class Time:
-
-    hours = 0
-    minutes = 0
-
-    def __init__(self, hours=0, minutes=0):
-        self.hours = hours
-        self.minutes = minutes
+#GPIO.output(PIN_1, OFF_STATUS)
+#GPIO.output(PIN_2, OFF_STATUS)
 
 
 class IrrigationSystem:
 
-    current_date = Date()
-    current_time = Time()
+    current_date = date_time.Date()
+    current_time = date_time.Time()
 
     serv = server.Server()
+
+    schedule = schedule.Schedule()
+
+    irrigator_1 = irrigator.Irrigator()
+    irrigator_2 = irrigator.Irrigator()
 
     stop_all = False
     irr_1_active = False
@@ -62,12 +55,12 @@ class IrrigationSystem:
     def get_date_and_time(self):
         get_hour = int(time.strftime("%H"))
         get_minute = int(time.strftime("%M"))
-        self.current_time = Time(get_hour, get_minute)
+        self.current_time = date_time.Time(get_hour, get_minute)
 
         get_day = int(time.strftime("%j"))
         get_month = int(time.strftime("%m"))
         get_year = int(time.strftime("%y"))
-        self.current_date = Date(get_year, get_month, get_day)
+        self.current_date = date_time.Date(get_year, get_month, get_day)
 
     def process_command(self, command):
 
@@ -122,6 +115,9 @@ class IrrigationSystem:
 
         print("Starting controller...")
 
+        print("Loading configuration file...")
+        self.irrigator_1, self.irrigator_2 = schedule.update_schedule()
+
         self.stop_all = False        
 
         while True:
@@ -132,45 +128,39 @@ class IrrigationSystem:
             if command != "":
                 self.process_command(command)          
 
-            if self.current_time.hours == 10 and self.current_time.minutes >= 1 and self.current_time.minutes < 8 and not self.stop_all:
-                # turn ON first irrigation
-                # turn OFF second irrigation
+            if self.current_time == self.irrigator_1.start_time and self.current_time + self.irrigator_1.dura and not self.stop_all:
+                
                 self.irr_1_active = True
                 self.irr_2_active = False
 
-                GPIO.output(PIN_1, 0)
-                GPIO.output(PIN_2, 1)
+                # turn ON first irrigation
+ #               GPIO.output(PIN_1, ON_STATUS)
+
+                # turn OFF second irrigation
+ #              GPIO.output(PIN_2, OFF_STATUS)
 
                 print("Inicio riego 1")
 
             elif self.current_time.hours == 10 and self.current_time.minutes >= 10  and self.current_time.minutes < 14 and not self.stop_all:
-                # turn OFF first irrigation
-                # turn ON second irrigation
+                
                 self.irr_1_active = False
                 self.irr_2_active = True
 
-                GPIO.output(PIN_1, 1)
-                GPIO.output(PIN_2, 0)
+                # turn OFF first irrigation
+  #              GPIO.output(PIN_1, OFF_STATUS)
+
+                # turn ON second irrigation
+   #             GPIO.output(PIN_2, ON_STATUS)
 
                 print("Inicio riego 2")
-                pass
 
             else:
-                # turn OFF fist irrigation
-                # turn OFF second irrigation
-                # print("Todo apagado")
-
-                # print(self.current_time.hours)
-                # print(self.current_time.minutes)
+            
                 self.irr_1_active = False
                 self.irr_2_active = False
 
-                GPIO.output(PIN_1, 1)
-                GPIO.output(PIN_2, 1)
+                # turn OFF fist irrigation
+    #            GPIO.output(PIN_1, OFF_STATUS)
 
-                pass
-
-print("Instantiating system...")
-irrigation_system = IrrigationSystem()
-print("Initializing run on controller...")
-irrigation_system.run()
+                # turn OFF second irrigation
+     #           GPIO.output(PIN_2, OFF_STATUS)
