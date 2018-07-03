@@ -42,18 +42,40 @@ class Time:
 
         return time
 
-    def __add__(self, minutes)
+    def __add__(self, minutes):
 
         hours = self.hours
 
         if self.minutes + minutes < 60:
-            minutes = self.minutes + time_2.minutes
+            final_minutes = self.minutes + minutes
         
         else:
             hours = hours + 1
-            minutes = self.minutes + time_2.minutes - 60
+            final_minutes = self.minutes + minutes - 60
 
-        time = Time(hours, minutes)
+        time = Time(hours, final_minutes)
 
         return time
+
+    def __gt__(self, time_2):
+        
+        if self.hours < time_2.hours:
+            return False
+        
+        elif self.hours == time_2.hours:
+            return self.minutes > time_2.minutes
+        
+        return True
+
+    def __ge__(self, time_2):
+
+        return self == time_2 or self > time_2
+
+    def __lt__(self, time_2):
+
+        return not self >= time_2
+    
+    def __le__(self, time_2):
+
+        return self < time_2 or self == time_2
 

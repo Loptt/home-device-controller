@@ -32,7 +32,7 @@ class IrrigationSystem:
 
     serv = server.Server()
 
-    schedule = schedule.Schedule()
+    irr_schedule = schedule.Schedule()
 
     irrigator_1 = irrigator.Irrigator()
     irrigator_2 = irrigator.Irrigator()
@@ -116,7 +116,7 @@ class IrrigationSystem:
         print("Starting controller...")
 
         print("Loading configuration file...")
-        self.irrigator_1, self.irrigator_2 = schedule.update_schedule()
+        self.irrigator_1, self.irrigator_2 = self.irr_schedule.update_schedule()
 
         self.stop_all = False        
 
@@ -126,9 +126,12 @@ class IrrigationSystem:
             command = self.serv.command
 
             if command != "":
-                self.process_command(command)          
+                self.process_command(command)
 
-            if self.current_time == self.irrigator_1.start_time and self.current_time + self.irrigator_1.dura and not self.stop_all:
+            activate_irr_1 = self.current_time >= self.irrigator_1.start_time and self.current_time < self.irrigator_1.start_time + self.irrigator_1.duration
+            activate_irr_2 = self.current_time >= self.irrigator_2.start_time and self.current_time < self.irrigator_2.start_time + self.irrigator_2.duration        
+
+            if activate_irr_1 and not self.stop_all:
                 
                 self.irr_1_active = True
                 self.irr_2_active = False
@@ -141,7 +144,7 @@ class IrrigationSystem:
 
                 print("Inicio riego 1")
 
-            elif self.current_time.hours == 10 and self.current_time.minutes >= 10  and self.current_time.minutes < 14 and not self.stop_all:
+            elif activate_irr_2 and not self.stop_all:
                 
                 self.irr_1_active = False
                 self.irr_2_active = True

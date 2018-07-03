@@ -27,12 +27,12 @@ class Schedule:
 
     def process_string_and_update(self):
         start_hour, start_minute, duration = self.irrigator_1_config.split()
-        self.irrigator_1.start_time = dt.Time(start_hour, start_minute)
-        self.irrigator_2.duration = duration
+        self.irrigator_1.start_time = dt.Time(int(start_hour), int(start_minute))
+        self.irrigator_2.duration = int(duration)
 
         start_hour, start_minute, duration = self.irrigator_2_config.split()
-        self.irrigator_2.start_time = dt.Time(start_hour, start_minute)
-        self.irrigator_2.duration = duration
+        self.irrigator_2.start_time = dt.Time(int(start_hour), int(start_minute))
+        self.irrigator_2.duration = int(duration)
 
     def update_schedule(self):
         self.load_from_file()
