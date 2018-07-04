@@ -5,7 +5,6 @@ import socket
 import sys
 import custom_date_time as dt
 from datetime import datetime
-import irrigator
 import schedule
 import device
 
@@ -17,8 +16,8 @@ class IrrigationSystem:
 
     serv = server.Server()
 
-    irrigator_1 = device.Device(2)
-    irrigator_2 = device.Device(3)
+    irrigator_1 = device.Device(4)
+    irrigator_2 = device.Device(5)
 
     stop_all = False
     irr_1_active = False
@@ -121,7 +120,7 @@ class IrrigationSystem:
             activate_dev_1 = self.irrigator_1.check_schedule(self.current_time, self.stop_all)
             activate_dev_2 = self.irrigator_2.check_schedule(self.current_time, self.stop_all)        
 
-            if activate_irr_1 and not self.stop_all:
+            if activate_dev_1 and not self.stop_all:
 
                 if not signal_1_sent:
                     print("\n" + currentDT + " -> Irrigation 1 start")
@@ -137,7 +136,7 @@ class IrrigationSystem:
                 signal_1_sent = False
                 self.irr_1_active = False
 
-            if activate_irr_2 and not self.stop_all:
+            if activate_dev_2 and not self.stop_all:
 
                 if not signal_2_sent:
                     print("\n" + currentDT +" -> Irrigation 2 start")
@@ -153,7 +152,7 @@ class IrrigationSystem:
                 signal_2_sent = False
                 self.irr_2_active = False
 
-            if not activate_irr_1 and not activate_irr_2:
+            if not activate_dev_1 and not activate_dev_2:
 
                 if not signal_stop_sent:
                     print("\n" + currentDT +" -> No irrigation active")

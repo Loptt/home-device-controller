@@ -16,7 +16,7 @@ class RaspberryControl:
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.pin, GPIO.OUT)
 
-        GPIO.output(PIN, self.OFF_STATUS)
+        GPIO.output(self.pin, self.OFF_STATUS)
 
     def turn_on(self):
         GPIO.output(self.pin, self.ON_STATUS)

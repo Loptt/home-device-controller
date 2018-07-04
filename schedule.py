@@ -1,4 +1,3 @@
-import irrigator
 import custom_date_time as dt
 
 class Schedule:
@@ -22,7 +21,7 @@ class Schedule:
         schedule_file.close()
 
     def process_string_and_update(self):
-        start_hour, start_minute, duration = self.irrigator_1_config.split()
+        start_hour, start_minute, duration = self.device_config.split()
         self.start_time = dt.Time(int(start_hour), int(start_minute))
         self.duration = int(duration)
 

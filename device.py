@@ -5,7 +5,7 @@ import custom_date_time as dt
 class Device:
 
     d_schedule = schedule.Schedule()
-    control = raspberry_control.RaspberryControl()
+    control = raspberry_control.RaspberryControl(0)
 
     def __init__(self, pin):
         control = raspberry_control.RaspberryControl(pin)
