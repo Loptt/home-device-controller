@@ -1,41 +1,24 @@
-#import RPi.GPIO as GPIO
 import time
 import threading
 import server
 import socket
 import sys
-import custom_date_time as date_time
+import custom_date_time as dt
+from datetime import datetime
 import irrigator
 import schedule
-
-
-PIN_1 = 2
-PIN_2 = 3
-
-#Electrical configuration demands the on status to be a logical 0
-ON_STATUS = 0
-#Electrical configuration demands the off status to be a logical 1
-OFF_STATUS = 1
-
-#GPIO.setmode(GPIO.BCM)
-#GPIO.setup(PIN_1, GPIO.OUT)
-#GPIO.setup(PIN_2, GPIO.OUT)
-
-#GPIO.output(PIN_1, OFF_STATUS)
-#GPIO.output(PIN_2, OFF_STATUS)
+import device
 
 
 class IrrigationSystem:
 
-    current_date = date_time.Date()
-    current_time = date_time.Time()
+    current_date = dt.Date()
+    current_time = dt.Time()
 
     serv = server.Server()
 
-    irr_schedule = schedule.Schedule()
-
-    irrigator_1 = irrigator.Irrigator()
-    irrigator_2 = irrigator.Irrigator()
+    irrigator_1 = device.Device(2)
+    irrigator_2 = device.Device(3)
 
     stop_all = False
     irr_1_active = False
@@ -55,12 +38,12 @@ class IrrigationSystem:
     def get_date_and_time(self):
         get_hour = int(time.strftime("%H"))
         get_minute = int(time.strftime("%M"))
-        self.current_time = date_time.Time(get_hour, get_minute)
+        self.current_time = dt.Time(get_hour, get_minute)
 
         get_day = int(time.strftime("%j"))
         get_month = int(time.strftime("%m"))
         get_year = int(time.strftime("%y"))
-        self.current_date = date_time.Date(get_year, get_month, get_day)
+        self.current_date = dt.Date(get_year, get_month, get_day)
 
     def process_command(self, command):
 
@@ -116,11 +99,18 @@ class IrrigationSystem:
         print("Starting controller...")
 
         print("Loading configuration file...")
-        self.irrigator_1, self.irrigator_2 = self.irr_schedule.update_schedule()
+        self.irrigator_1.update_schedule()
+        self.irrigator_2.update_schedule()
 
-        self.stop_all = False        
+        self.stop_all = False
+
+        signal_1_sent = False
+        signal_2_sent = False   
+        signal_stop_sent = False           
 
         while True:
+
+            currentDT = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
             self.get_date_and_time()
             command = self.serv.command
@@ -128,42 +118,43 @@ class IrrigationSystem:
             if command != "":
                 self.process_command(command)
 
-            activate_irr_1 = self.current_time >= self.irrigator_1.start_time and self.current_time < self.irrigator_1.start_time + self.irrigator_1.duration
-            activate_irr_2 = self.current_time >= self.irrigator_2.start_time and self.current_time < self.irrigator_2.start_time + self.irrigator_2.duration        
+            activate_dev_1 = self.irrigator_1.check_schedule(self.current_time, self.stop_all)
+            activate_dev_2 = self.irrigator_2.check_schedule(self.current_time, self.stop_all)        
 
             if activate_irr_1 and not self.stop_all:
+
+                if not signal_1_sent:
+                    print("\n" + currentDT + " -> Irrigation 1 start")
+                    signal_1_sent = True
                 
                 self.irr_1_active = True
-                self.irr_2_active = False
-
-                # turn ON first irrigation
- #               GPIO.output(PIN_1, ON_STATUS)
-
-                # turn OFF second irrigation
- #              GPIO.output(PIN_2, OFF_STATUS)
-
-                print("Inicio riego 1")
-
-            elif activate_irr_2 and not self.stop_all:
-                
-                self.irr_1_active = False
-                self.irr_2_active = True
-
-                # turn OFF first irrigation
-  #              GPIO.output(PIN_1, OFF_STATUS)
-
-                # turn ON second irrigation
-   #             GPIO.output(PIN_2, ON_STATUS)
-
-                print("Inicio riego 2")
+                signal_stop_sent = False
 
             else:
-            
+                if signal_1_sent:
+                    print("\n" + currentDT +" -> Irrigation 1 stopped")
+
+                signal_1_sent = False
                 self.irr_1_active = False
+
+            if activate_irr_2 and not self.stop_all:
+
+                if not signal_2_sent:
+                    print("\n" + currentDT +" -> Irrigation 2 start")
+                    signal_2_sent = True
+
+                self.irr_2_active = True
+                signal_stop_sent = False
+
+            else:
+                if signal_2_sent:
+                    print("\n" + currentDT +" -> Irrigation 2 stopped")
+
+                signal_2_sent = False
                 self.irr_2_active = False
 
-                # turn OFF fist irrigation
-    #            GPIO.output(PIN_1, OFF_STATUS)
+            if not activate_irr_1 and not activate_irr_2:
 
-                # turn OFF second irrigation
-     #           GPIO.output(PIN_2, OFF_STATUS)
+                if not signal_stop_sent:
+                    print("\n" + currentDT +" -> No irrigation active")
+                    signal_stop_sent = True
