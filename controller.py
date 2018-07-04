@@ -16,8 +16,8 @@ class IrrigationSystem:
 
     serv = server.Server()
 
-    irrigator_1 = device.Device(4)
-    irrigator_2 = device.Device(5)
+    irrigator_1 = device.Device(1, 4)
+    irrigator_2 = device.Device(2, 5)
 
     stop_all = False
     irr_1_active = False
@@ -79,11 +79,11 @@ class IrrigationSystem:
                 
         elif command == "help":
             self.serv.send_message("------List of avaliable commands--------\n")
-            self.serv.send_message("status: prints the current status of the system\n")
-            self.serv.send_message("stop: stops all irrigation\n")
-            self.serv.send_message("resume: continue normal irrigation operations\n")
-            self.serv.send_message("help: displays a list of available commands\n")
-            self.serv.send_message("exit: exits current client session\n")
+            self.serv.send_message("status:    prints the current status of the system\n")
+            self.serv.send_message("stop:      stops all irrigation\n")
+            self.serv.send_message("resume:    continue normal irrigation operations\n")
+            self.serv.send_message("help:      displays a list of available commands\n")
+            self.serv.send_message("exit:      exits current client session\n")
 
         elif command == "exit":
             pass

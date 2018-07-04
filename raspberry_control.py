@@ -19,9 +19,13 @@ class RaspberryControl:
         GPIO.output(self.pin, self.OFF_STATUS)
 
     def turn_on(self):
+
         GPIO.output(self.pin, self.ON_STATUS)
+        pass
 
     def turn_off(self):
+
         GPIO.output(self.pin, self.OFF_STATUS)
+        pass
 
     
