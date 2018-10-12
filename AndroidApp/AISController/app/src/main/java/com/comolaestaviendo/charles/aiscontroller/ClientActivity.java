@@ -85,7 +85,18 @@ public class ClientActivity extends AppCompatActivity {
 
         switch (item.getItemId()) {
             case R.id.connect:
+                new ConnectTask().execute("");
+                return true;
 
+            case R.id.disconnect:
+                tcpClient.stopClient();
+                tcpClient = null;
+                arrayList.clear();
+                adapter.notifyDataSetChanged();
+                return true;
+
+                default:
+                    return super.onOptionsItemSelected(item);
         }
     }
 
@@ -97,9 +108,21 @@ public class ClientActivity extends AppCompatActivity {
 
                 @Override
                 public void messageReceived(String message) {
-
+                    publishProgress(message);
                 }
             });
+
+            tcpClient.run();
+
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(String... values) {
+            super.onProgressUpdate(values);
+
+            arrayList.add(values[0]);
+            adapter.notifyDataSetChanged();
         }
     }
 }
