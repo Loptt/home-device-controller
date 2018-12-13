@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/connect" android:title="Connect"/>
-    <item android:id="@+id/disconnect" android:title="Disonnect" android:enabled="false"/>
-</menu>
