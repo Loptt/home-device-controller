@@ -1,0 +1,14 @@
+<% include ../partials/header %>
+
+<div class="container">
+    <h1>Devices</h1>
+    <ul>
+        <% devices.forEach((device) => { %>
+            <li><a href="/devices/<%= device._id %>"><%= device.name %></a></li>
+        <% }); %>
+    
+        <a class="btn btn-primary" href="/devices/new">Agregar Dispositivo</a>
+    </ul>
+</div>
+
+<% include ../partials/footer %>

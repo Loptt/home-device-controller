@@ -1,0 +1,24 @@
+h1 {
+    text-align: center;
+}
+
+.form-div {
+    width: 30%;
+    margin:30px auto
+}
+
+.schedule-element {
+    background-color: #eeeeee;
+    margin: 15px;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.schedule-edit-btn {
+    margin-right: 13px;
+}
+
+.delete-form {
+    display: inline;
+    margin-right: 10px;
+}
