@@ -30,16 +30,16 @@ function createCron(hour, minute) {
 function saveIndJob(hour, minute, duration, dPin) {
 
     var jobs = [];
-    var pin = dPin; //var pin = new Gpio(Number(dPin), "out");
+    var pin = new Gpio(Number(dPin), "out");
 
     var startJob = nodeSchedule.scheduleJob(createCron(hour, minute), function (savePin) {
         console.log("JOOOB executed start with pin: " + savePin);
-        //savePin.writeSync(0);   //Turn on pin
+        savePin.writeSync(0);   //Turn on pin
     }.bind(null, pin));
 
     var endJob = nodeSchedule.scheduleJob(createCron(hour, minute + duration), function (savePin) {
         console.log("JOOOB executed end with pin: " + savePin);
-        //savePin.writeSync(1);   //Turn off pin
+        savePin.writeSync(1);   //Turn off pin
     }.bind(null, pin));
 
     jobs.push(startJob);
