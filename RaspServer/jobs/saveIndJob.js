@@ -4,21 +4,42 @@ var mongoose = require("mongoose"),
     Device = require("../models/device"),
     Schedule = require("../models/schedule");
 
+function createCron(hour, minute) {
+    var finalMinute = Number(minute);
+    var finalHour = Number(hour);
+
+    var addedHours = Math.floor(finalMinute / 60);
+
+    if (finalMinute > 59) {
+        finalMinute = finalMinute % 60;
+    }
+
+    console.log("Final hour:" + finalHour + " Added: " + addedHours);
+
+    finalHour += addedHours;
+
+    if (finalHour + addedHours > 23) {
+        finalHour = (finalHour + addedHours) % 24;
+    }
+
+    console.log( "0 " + finalMinute + " " + finalHour + " * * *");
+
+    return "0 " + finalMinute + " " + finalHour + " * * *";
+}
+
 function saveIndJob(hour, minute, duration, dPin) {
 
     var jobs = [];
-    var cronStart = "0 " + minute + " " + hour + " * * *";
     var pin = dPin; //var pin = new Gpio(Number(dPin), "out");
 
-    var startJob = nodeSchedule.scheduleJob(cronStart, function (savePin) {
-        console.log("JOOOB executed start");
+    var startJob = nodeSchedule.scheduleJob(createCron(hour, minute), function (savePin) {
+        console.log("JOOOB executed start with pin: " + savePin);
         //pin.writeSync(1);   //Turn on pin
     }.bind(null, pin));
 
-    var cronEnd = "0 " + (minute + duration) + " " + hour + " * * *";
-    var endJob = nodeSchedule.scheduleJob(cronEnd, function (savePin) {
+    var endJob = nodeSchedule.scheduleJob(createCron(hour, minute + duration), function (savePin) {
         //pin.writeSync(0);   //Turn off pin
-        console.log("JOOOB executed end");
+        console.log("JOOOB executed end with pin: " + savePin);
     }.bind(null, pin));
 
     jobs.push(startJob);

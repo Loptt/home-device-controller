@@ -7,8 +7,7 @@ var express = require("express"),
     Device = require("./models/device"),
     Schedule = require("./models/schedule"),
     seedDB = require("./seeds"),
-    saveJobs = require("./jobs/saveJobs"),
-    saveIndJob = require("./jobs/saveIndJob");
+    jobFunctions = require("./jobs");
 
 //Connect to database
 mongoose.connect("mongodb://localhost:27017/irrigation_system", { useNewUrlParser: true }, (err) => {
@@ -25,7 +24,7 @@ mongoose.connect("mongodb://localhost:27017/irrigation_system", { useNewUrlParse
 //====================
 
 //seedDB();
-var jobs = saveJobs(); //Create jobs for every schedule object
+var jobs = jobFunctions.saveJobs(); //Create jobs for every schedule object
 
 app.use(methodOverride("_method"));
 app.use(express.static(__dirname + "/public"));
@@ -100,6 +99,8 @@ app.put("/devices/:id", (req, res) => {
             console.log(err);
             res.redirect("/devices");
         } else {
+            jobFunctions.cancelJobs(jobs);
+            jobs = jobFunctions.saveJobs();
             res.redirect("/devices/" + req.params.id);
         }
     });
@@ -111,12 +112,19 @@ app.delete("/devices/:id", (req, res) => {
         if (err) {
             console.log(err);
         } else {
+            var initialLength = foundDevice.schedules.length;
             foundDevice.schedules.forEach((schedule, i) => {
                 Schedule.findByIdAndRemove(schedule._id, (err) => {
                     if (err) {
                         console.log(err);
                     } else {
                         console.log("Removed schedule no " + i);
+                    }
+                    //TODO: NOT WORKING YET
+                    if (i === initialLength-1) {
+                        console.log("Restarting jobs");
+                        jobFunctions.cancelJobs(jobs);
+                        jobs = jobFunctions.saveJobs();
                     }
                 });
             });
@@ -167,7 +175,10 @@ app.post("/devices/:id/schedules", (req, res) => {
                     console.log(err);
                 } else {
                     //Concatenate new jobs to older job array
-                    Array.prototype.push.apply(jobs, saveIndJob(newSchedule.start.hour, newSchedule.start.minute, newSchedule.duration, foundDevice.pin));
+                    Array.prototype.push.apply(jobs, 
+                        jobFunctions.saveIndJob(newSchedule.start.hour, newSchedule.start.minute,
+                        newSchedule.duration, foundDevice.pin));
+
                     foundDevice.schedules.push(newSchedule);
                     foundDevice.save();
                     res.redirect("/devices/" + foundDevice._id);
@@ -182,7 +193,7 @@ app.get("/devices/:id/schedules/:schedule_id/edit", (req, res) => {
     Schedule.findById(req.params.schedule_id, (err, foundSchedule) => {
         if (err) {
             console.log(err);
-            res.redirect("/devices");
+            res.redirect("back");
         } else {
             res.render("schedules/edit", {device_id: req.params.id, schedule: foundSchedule});
         }
@@ -203,22 +214,39 @@ app.put("/devices/:id/schedules/:schedule_id", (req, res) => {
             console.log(err);
             res.redirect("back");
         } else {
+            jobFunctions.cancelJobs(jobs);
+            jobs = jobFunctions.saveJobs();
             res.redirect("/devices/" + req.params.id);
         }
     });
 });
 
 app.delete("/devices/:id/schedules/:schedule_id", (req, res) => {
-    Schedule.findByIdAndRemove(req.params.schedule_id, (err) => {
+    Device.find({}, (err, devices) => {
         if (err) {
             console.log(err);
-            res.redirect("back");
         } else {
-            res.redirect("/devices/" + req.params.id);  
+            devices.forEach((device) => {
+                device.schedules.forEach((schedule, i) => {
+                    if (schedule._id.equals(req.params.schedule_id)) {
+                        device.schedules.splice(i, 1);
+                    }
+                });
+                device.save();
+            });
+            Schedule.findByIdAndRemove(req.params.schedule_id, (err) => {
+                if (err) {
+                    console.log(err);
+                    res.redirect("back");
+                } else {
+                    jobFunctions.cancelJobs(jobs);
+                    jobs = jobFunctions.saveJobs();
+                    res.redirect("/devices/" + req.params.id);  
+                }
+            });
         }
     });
 });
-
 
 //General route
 app.get("*", (req, res) => {

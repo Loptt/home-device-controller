@@ -3,7 +3,7 @@ h1 {
 }
 
 .form-div {
-    width: 30%;
+    width: 80%;
     margin:30px auto
 }
 
@@ -21,4 +21,13 @@ h1 {
 .delete-form {
     display: inline;
     margin-right: 10px;
+}
+
+.index-device {
+    background-color: #ccdefc;
+    border-radius: 10px;
+}
+
+.delete-in-edit {
+    margin-bottom: 15px;
 }

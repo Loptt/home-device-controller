@@ -16,10 +16,10 @@
                 <button class="btn btn-lg btn-success btn-block">Guardar</button>
             </div>
         </form>
-        <form action="/devices/<%= device._id %>?_method=DELETE" method="post">
+        <form class="delete-in-edit" action="/devices/<%= device._id %>?_method=DELETE" method="post">
             <button class="btn btn-block btn-danger">Eliminar</button>
         </form>
-        <a class="btn btn-light" href="/devices/<%= device._id %>">Regresar</a>
+        <a class="btn btn-light btn-block" href="/devices/<%= device._id %>">Regresar</a>
     </div>
 </div>
 

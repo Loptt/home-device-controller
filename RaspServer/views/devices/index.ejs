@@ -1,14 +1,31 @@
 <% include ../partials/header %>
 
 <div class="container">
-    <h1>Devices</h1>
-    <ul>
+    <div class="jumbotron">
+        <div class="container">
+            <h1 class="h1">Dispositivos</h1>
+            <a class="btn btn-primary d-flex justify-content-center" href="/devices/new">Agregar Dispositivo</a>
+        </div>
+    </div>
+    <div class="row text-center">
         <% devices.forEach((device) => { %>
-            <li><a href="/devices/<%= device._id %>"><%= device.name %></a></li>
+        <div class="col-md-3 col-sm-6">
+            <a href="/devices/<%= device._id %>">
+                <div class="thumbnail index-device pb-1">
+                    <h3 class="mt-2 pt-2">
+                        <%= device.name %>
+                    </h3>
+                    <div class="caption">
+                        <h5>Pin:
+                            <%= device.pin %>
+                        </h5>
+                    </div>
+                </div>
+            </a>
+        </div>
         <% }); %>
-    
-        <a class="btn btn-primary" href="/devices/new">Agregar Dispositivo</a>
-    </ul>
+
+    </div>
 </div>
 
 <% include ../partials/footer %>
