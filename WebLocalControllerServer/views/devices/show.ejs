@@ -45,6 +45,27 @@
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
                     Eliminar
                 </button>
+                <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            ...
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <form class="delete-form" action="/devices/<%= device._id %>/schedules/<%= schedule._id %>?_method=DELETE" method="post">
+                                <button class="btn float-right btn-danger">Eliminar</button>
+                            </form>
+                        </div>
+                        </div>
+                    </div>
+                </div>
                 <a class="btn btn-warning float-right schedule-edit-btn" href="/devices/<%= device._id %>/schedules/<%= schedule._id %>/edit">Editar</a>
             </div>
         </div>
@@ -52,25 +73,5 @@
     <% }); %>
     <a class="btn btn-light" href="/devices/<%= device._id %>/schedules/new">Agregar nuevo horario</a>
 </div>
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                ...
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <form class="delete-form" action="/devices/<%= device._id %>/schedules/<%= schedule._id %>?_method=DELETE" method="post">
-                    <button class="btn float-right btn-danger">Eliminar</button>
-                </form>
-            </div>
-            </div>
-        </div>
-    </div>
+
 <% include ../partials/footer %>
