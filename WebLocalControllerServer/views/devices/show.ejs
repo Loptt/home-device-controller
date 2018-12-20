@@ -1,0 +1,39 @@
+<% include ../partials/header %>
+
+<div class="container">
+
+    <h1>
+        <%= device.name %>
+    </h1>
+    <h3>Horarios</h3>
+    <% device.schedules.forEach((schedule, i) => { %>
+    <div class="schedule-element">
+        <p>
+            Horario
+            <%= i +1 %>
+        </p>
+        <div class="row">
+            <div class="col-sm-8">
+                <ul>
+                    <li><strong>Inicio - </strong>
+                        <%= schedule.start.hour %><span>:</span>
+                        <%= schedule.start.minute < 10 ? "0" + schedule.start.minute : schedule.start.minute %>
+                    </li>
+                    <li><strong>Duracion - </strong>
+                        <%= schedule.duration + (schedule.duration === 1 ? " minuto" : " minutos") %></li>
+                </ul>
+            </div>
+            <div class="col-sm-4">
+                <form class="delete-form" action="/devices/<%= device._id %>/schedules/<%= schedule._id %>?_method=DELETE" method="post">
+                    <button class="btn float-right btn-danger">Eliminar</button>
+                </form>
+                <a class="btn btn-warning float-right schedule-edit-btn" href="/devices/<%= device._id %>/schedules/<%= schedule._id %>/edit">Editar</a>
+            </div>
+        </div>
+    </div>
+    <% }); %>
+    <a class="btn btn-light" href="/devices/<%= device._id %>/schedules/new">Agregar nuevo horario</a>
+    <a class="btn btn-warning" href="/devices/<%= device._id %>/edit">Editar dispositivo</a>
+
+</div>
+<% include ../partials/footer %>
