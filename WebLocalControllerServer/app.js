@@ -80,6 +80,7 @@ app.post("/devices", (req, res) => {
         if (err) {
             console.log(err);
         } else {
+            req.flash("success", "Dispositivo añadido");
             res.redirect("/devices");
         }
     });
@@ -123,6 +124,7 @@ app.put("/devices/:id", (req, res) => {
         } else {
             jobFunctions.cancelJobs(jobs);
             jobs = jobFunctions.saveJobs();
+            req.flash("success", "Dispositivo actualizado");
             res.redirect("/devices/" + req.params.id);
         }
     });
@@ -156,6 +158,7 @@ app.delete("/devices/:id", (req, res) => {
                     console.log(err);
                     res.redirect("/devices");
                 } else {
+                    req.flash("success", "Dispositivo eliminado");
                     res.redirect("/devices");
                 }
             });
@@ -174,7 +177,7 @@ app.get("/devices/:id/on", (req, res) => {
             pin.writeSync(ONSTATE);
             setTimeout(() => {
                 pin.writeSync(OFFSTATE);
-            }, 5000);
+            }, 300000);
             req.flash("success", "Dispositivo encendido");
             res.redirect("back");
         }
@@ -236,6 +239,7 @@ app.post("/devices/:id/schedules", (req, res) => {
 
                     foundDevice.schedules.push(newSchedule);
                     foundDevice.save();
+                    req.flash("success", "Horario añadido");
                     res.redirect("/devices/" + foundDevice._id);
                 }
             });
@@ -271,6 +275,7 @@ app.put("/devices/:id/schedules/:schedule_id", (req, res) => {
         } else {
             jobFunctions.cancelJobs(jobs);
             jobs = jobFunctions.saveJobs();
+            req.flash("success", "Horario actualizado");
             res.redirect("/devices/" + req.params.id);
         }
     });
@@ -296,6 +301,7 @@ app.delete("/devices/:id/schedules/:schedule_id", (req, res) => {
                 } else {
                     jobFunctions.cancelJobs(jobs);
                     jobs = jobFunctions.saveJobs();
+                    req.flash("success", "Horario eliminado");
                     res.redirect("/devices/" + req.params.id);  
                 }
             });
