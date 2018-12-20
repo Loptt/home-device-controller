@@ -4,6 +4,8 @@ var express = require("express"),
     mongoose = require("mongoose"),
     nodeSchedule = require("node-schedule"),
     methodOverride = require("method-override"),
+    Gpio = require("onoff").Gpio,
+    flash = require("connect-flash")
     Device = require("./models/device"),
     Schedule = require("./models/schedule"),
     seedDB = require("./seeds"),
@@ -20,18 +22,36 @@ mongoose.connect(process.env.DCDATABASEURL, { useNewUrlParser: true }, (err) => 
     console.log("Database connected!");
 });
 
+//GLOBAL CONSTANTS
+ONSTATE = 0;
+OFFSTATE = 1;
+
 //====================
 //  SETUP FUNCTIONS
 //====================
 
 //seedDB();
 var jobs = jobFunctions.saveJobs(); //Create jobs for every schedule object
-jobFunctions.initializePins(); //Set all pins to its initial state
+//jobFunctions.initializePins(); //Set all pins to its initial state
 
 app.use(methodOverride("_method"));
 app.use(express.static(__dirname + "/public"));
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(flash());
 app.set("view engine", "ejs");
+
+app.use(require("express-session")({
+    secret: "Toby is the best and cutest dog",
+    resave: false,
+    saveUninitialized: false
+}));
+
+
+app.use((req, res, next) => {
+    res.locals.error = req.flash("error");
+    res.locals.success = req.flash("success");
+    next();
+});
 
 
 //LANDING ROUTE
@@ -139,6 +159,39 @@ app.delete("/devices/:id", (req, res) => {
                     res.redirect("/devices");
                 }
             });
+        }
+    });
+});
+
+app.get("/devices/:id/on", (req, res) => {
+    Device.findById(req.params.id, (err, device) => {
+        if (err) {
+            console.log(err);
+            req.flash("error", "La operación no se ha podido realizar");
+            res.redirect("back");
+        } else {
+            var pin = new Gpio(device.pin, "out");
+            pin.writeSync(ONSTATE);
+            setTimeout(() => {
+                pin.writeSync(OFFSTATE);
+            }, 5000);
+            req.flash("success", "Dispositivo encendido");
+            res.redirect("back");
+        }
+    });
+});
+
+app.get("/devices/:id/off", (req, res) => {
+    Device.findById(req.params.id, (err, device) => {
+        if (err) {
+            console.log(err);
+            req.flash("error", "La operación no se ha podido realizar");
+            res.redirect("back");
+        } else {
+            var pin = new Gpio(device.pin, "out");
+            pin.writeSync(OFFSTATE);
+            req.flash("success", "Dispositivo apagado");
+            res.redirect("back");
         }
     });
 });

@@ -31,3 +31,13 @@ h1 {
 .delete-in-edit {
     margin-bottom: 15px;
 }
+
+.schedule-table-row {
+    width: 100%;
+}
+
+table {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 15px;
+}

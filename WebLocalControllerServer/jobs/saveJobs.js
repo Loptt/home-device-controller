@@ -13,7 +13,7 @@ function saveJobs() {
         } else {
             devices.forEach((device) => {
                 device.schedules.forEach((schedule) => {
-                    var pin = device.pin; //var pin = new Gpio(Number(device.pin), "out");
+                    var pin = device.pin;
                     Array.prototype.push.apply(jobs, 
                         saveIndJob(schedule.start.hour, schedule.start.minute, schedule.duration, pin));
                 });

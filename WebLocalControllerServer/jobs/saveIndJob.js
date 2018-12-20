@@ -34,12 +34,12 @@ function saveIndJob(hour, minute, duration, dPin) {
 
     var startJob = nodeSchedule.scheduleJob(createCron(hour, minute), function (savePin) {
         console.log("JOOOB executed start with pin: " + savePin);
-        pin.writeSync(0);   //Turn on pin
+        //savePin.writeSync(0);   //Turn on pin
     }.bind(null, pin));
 
     var endJob = nodeSchedule.scheduleJob(createCron(hour, minute + duration), function (savePin) {
         console.log("JOOOB executed end with pin: " + savePin);
-        pin.writeSync(1);   //Turn off pin
+        //savePin.writeSync(1);   //Turn off pin
     }.bind(null, pin));
 
     jobs.push(startJob);

@@ -15,3 +15,11 @@
     <nav class="navbar navbar-light bg-light">
         <a class="navbar-brand" href="/">Controlador</a>
     </nav>
+    <div class="container">
+        <% if (error && error.length > 0){ %>
+            <div class="alert alert-danger"><%= error %></div>
+        <% } %>
+        <% if (success && success.length > 0){ %>
+            <div class="alert alert-success"><%= success %></div>
+        <% } %>
+    </div>
