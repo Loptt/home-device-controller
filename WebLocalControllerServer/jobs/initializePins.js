@@ -11,7 +11,7 @@ function initializePins() {
         } else {
             devices.forEach((device) => {
                 var pin = new Gpio(Number(device.pin), "out");
-                pin.writeSync(1);
+                pin.writeSync(OFFSTATE);
             });
         }
     });
