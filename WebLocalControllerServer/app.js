@@ -10,6 +10,7 @@ var express = require("express"),
     jobFunctions = require("./jobs");
 
 //Connect to database
+console.log(process.env.DCDATABASEURL);
 mongoose.connect(process.env.DCDATABASEURL, { useNewUrlParser: true }, (err) => {
     if (err) {
         console.log("DATABASE ERROR");
