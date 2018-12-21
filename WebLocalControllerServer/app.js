@@ -32,7 +32,7 @@ OFFSTATE = 1;
 
 //seedDB();
 var jobs = jobFunctions.saveJobs(); //Create jobs for every schedule object
-//jobFunctions.initializePins(); //Set all pins to its initial state
+jobFunctions.initializePins(); //Set all pins to its initial state
 
 app.use(methodOverride("_method"));
 app.use(express.static(__dirname + "/public"));
