@@ -9,5 +9,5 @@ if len(sys.argv) < 2:
 else:
     pin = int(sys.argv[1])
     GPIO.setup(pin, GPIO.OUT)
-    GPIO.output(pin, 0)
+    GPIO.output(pin, 1)
     
