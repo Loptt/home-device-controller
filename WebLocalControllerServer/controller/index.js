@@ -3,7 +3,7 @@ const { exec } = require("child_process");
 controller = {}
 
 controller.turnOn = function (pin) {
-    exec("python3 ./python/on.py " + Number(pin), (err, stdout, stderr) => {
+    exec("python3 ./controller/python/on.py " + Number(pin), (err, stdout, stderr) => {
         if (err) {
             console.log(err);
             return;
@@ -12,7 +12,7 @@ controller.turnOn = function (pin) {
 }
 
 controller.turnOff = function (pin) {
-    exec("python3 ./python/off.py " + Number(pin), (err, stdout, stderr) => {
+    exec("python3 ./controller/python/off.py " + Number(pin), (err, stdout, stderr) => {
         if (err) {
             console.log(err);
             return;
