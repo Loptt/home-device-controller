@@ -11,6 +11,7 @@ function initializePins() {
         } else {
             devices.forEach((device) => {
                 var pin = new Gpio(Number(device.pin), "out");
+                console.log("Turning off " + device.pin);
                 pin.writeSync(OFFSTATE);
             });
         }
