@@ -4,12 +4,12 @@ var express = require("express"),
     mongoose = require("mongoose"),
     nodeSchedule = require("node-schedule"),
     methodOverride = require("method-override"),
-    Gpio = require("onoff").Gpio,
-    flash = require("connect-flash")
+    flash = require("connect-flash"),
     Device = require("./models/device"),
     Schedule = require("./models/schedule"),
     seedDB = require("./seeds"),
-    jobFunctions = require("./jobs");
+    jobFunctions = require("./jobs"),
+    controller = require("./controller");
 
 //Connect to database
 console.log(process.env.DCDATABASEURL);
@@ -173,10 +173,9 @@ app.get("/devices/:id/on", (req, res) => {
             req.flash("error", "La operación no se ha podido realizar");
             res.redirect("back");
         } else {
-            var pin = new Gpio(device.pin, "out");
-            pin.writeSync(ONSTATE);
+            controller.turnOn(device.pin);
             setTimeout(() => {
-                pin.writeSync(OFFSTATE);
+                controller.turnOff(device.pin);
             }, 300000);
             req.flash("success", "Dispositivo encendido");
             res.redirect("back");
@@ -191,8 +190,7 @@ app.get("/devices/:id/off", (req, res) => {
             req.flash("error", "La operación no se ha podido realizar");
             res.redirect("back");
         } else {
-            var pin = new Gpio(device.pin, "out");
-            pin.writeSync(OFFSTATE);
+            controller.turnOff(device.pin);
             req.flash("success", "Dispositivo apagado");
             res.redirect("back");
         }
@@ -314,6 +312,6 @@ app.get("*", (req, res) => {
     res.redirect("/devices");
 });
 
-app.listen(3000, () => {
-    console.log("Rasp server started on port 3000");
+app.listen(80, () => {
+    console.log("Rasp server started on port 80 ");
 });

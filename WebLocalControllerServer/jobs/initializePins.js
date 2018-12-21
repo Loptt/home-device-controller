@@ -1,6 +1,6 @@
 var mongoose = require("mongoose"),
     nodeSchedule = require("node-schedule"),
-    Gpio = require("onoff").Gpio,
+    controller = require("../controller"),
     Device = require("../models/device"),
     Schedule = require("../models/schedule");
 
@@ -10,9 +10,8 @@ function initializePins() {
             console.log(err);
         } else {
             devices.forEach((device) => {
-                var pin = new Gpio(Number(device.pin), "out");
                 console.log("Turning off " + device.pin);
-                pin.writeSync(OFFSTATE);
+                controller.turnOff(device.pin);
             });
         }
     });

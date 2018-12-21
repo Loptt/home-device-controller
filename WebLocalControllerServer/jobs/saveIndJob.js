@@ -1,6 +1,6 @@
 var mongoose = require("mongoose"),
     nodeSchedule = require("node-schedule"),
-    Gpio = require("onoff").Gpio,
+    controller = require("../controller"),
     Device = require("../models/device"),
     Schedule = require("../models/schedule");
 
@@ -30,16 +30,16 @@ function createCron(hour, minute) {
 function saveIndJob(hour, minute, duration, dPin) {
 
     var jobs = [];
-    var pin = new Gpio(Number(dPin), "out");
+    var pin = Number(dPin);
 
     var startJob = nodeSchedule.scheduleJob(createCron(hour, minute), function (savePin) {
         console.log("JOOOB executed start with pin: " + savePin);
-        savePin.writeSync(ONSTATE);   //Turn on pin
+        controller.turnOn(savePin);
     }.bind(null, pin));
 
     var endJob = nodeSchedule.scheduleJob(createCron(hour, minute + duration), function (savePin) {
         console.log("JOOOB executed end with pin: " + savePin);
-        savePin.writeSync(OFFSTATE);   //Turn off pin
+        controller.turnOff(savePin);
     }.bind(null, pin));
 
     jobs.push(startJob);
