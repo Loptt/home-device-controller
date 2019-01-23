@@ -1,0 +1,23 @@
+<% include ../partials/header %>
+
+<div class="container">
+    <h1>Edita</h1>
+    <div class="form-div">
+        <form action="/controllers/<%= controller._id %>?_method=PUT" method="POST">
+            <div class="form-group">
+                <label for="name">Nombre</label>
+                <input class="form-control" type="text" name="controller[name]" value="<%= controller.name %>">
+            </div>
+            <div class="form-group">
+                <label for="type">Tipo</label>
+                <input class="form-control" type="text" name="controller[type]" placeholder="Tipo">
+            </div>
+            <div class="form-group">
+                <button class="btn btn-lg btn-success btn-block">Agregar</button>
+            </div>
+        </form>
+        <a class="btn btn-light btn-block" href="/controllers">Regresar</a>
+    </div>
+</div>
+
+<% include ../partials/footer %>

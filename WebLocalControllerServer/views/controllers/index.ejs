@@ -1,0 +1,26 @@
+<% include ../partials/header %>
+
+<div class="container">
+    <div class="jumbotron">
+        <div class="container">
+            <h1 class="h1">Bienvenido</h1>
+            <a class="btn btn-primary d-flex justify-content-center" href="/controllers/new">Agregar Controlador</a>
+        </div>
+    </div>
+    <div class="row text-center">
+        <% controllers.forEach((controller) => { %>
+        <div class="col-md-3 col-sm-6">
+            <a href="/controllers/<%= controller._id %>">
+                <div class="thumbnail index-device pb-1">
+                    <h3 class="mt-2 pt-2">
+                        <%= controller.name %>
+                    </h3>
+                </div>
+            </a>
+        </div>
+        <% }); %>
+
+    </div>
+</div>
+
+<% include ../partials/footer %>

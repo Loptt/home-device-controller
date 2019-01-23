@@ -1,0 +1,22 @@
+<% include ../partials/header %>
+
+<div class="container">
+
+    <div class="jumbotron">
+        <h1>
+            <%= controller.name %>
+        </h1>
+    </div>
+    <h3 class="mt-4">Información del controlador</h3>
+    <p><strong>ID: </strong> <%= controller.key %></p>
+    <a class="btn btn-outline-warning" href="/controllers/<%= controller._id %>/edit">Editar controlador</a>
+    <hr>
+    <h3>Dispositivos</h3>
+    <% controller.devices.forEach((device, i) => { %>
+    <div>
+        <h1>Hola</h1>   
+    </div>
+    <% }); %>
+</div>
+
+<% include ../partials/footer %>
